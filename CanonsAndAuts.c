@@ -13,9 +13,15 @@
 static sparsegraph *g_sg;
 static DEFAULTOPTIONS_SPARSEGRAPH(options_sg);
 static statsblk stats;
+static char *graphfile;
 
-int main()
+int main(argc,argv)
+int argc;
+char **argv;
 {
+
+        graphfile = (char*) argv[1];
+
         DYNALLSTAT(int,lab,lab_sz);
         DYNALLSTAT(int,ptn,ptn_sz);
         DYNALLSTAT(int,orbits,orbits_sz);
@@ -31,7 +37,7 @@ options_sg.cartesian = TRUE;
 
         sparsegraph *g;  //Jesse - changed to sparsegraph for Traces
 
-        infile = (FILE*) opengraphfile("testgraph.g6",&codetype,0,1);
+        infile = (FILE*) opengraphfile(graphfile,&codetype,0,1);
         g_sg =  (sparsegraph*) read_sg(infile,NULL);
 
         int n, m;
