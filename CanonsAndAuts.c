@@ -1,11 +1,5 @@
-//To do:
-
-//Read in a graph in .g6 format
-//optionally read in a file with colourings
-//output a file with the canonical representations - particularly of a specific coloured section? and also a file with the automorphisms
-//Put flags to only output one or the other, and do both by default
-//output in the form of a list, readable by gap
-//flags for choosing to 0 index the input and output respectively, default being to start at 1
+// To compile: gcc CanonsAndAuts.c -o CanonsAndAuts nauty.a
+// To use: CanonsAndAuts graphfile.g6
 
 #include "nauty.h"
 #include "nausparse.h"
@@ -36,7 +30,7 @@ options_sg.linelength= 0;
         int codetype;
 
 
-        sparsegraph *g;  //Jesse - changed to sparsegraph for Traces
+        sparsegraph *g;
 
         infile = (FILE*) opengraphfile(graphfile,&codetype,0,1);
         g_sg =  (sparsegraph*) read_sg(infile,NULL);
