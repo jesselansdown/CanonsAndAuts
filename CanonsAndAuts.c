@@ -30,6 +30,7 @@ char **argv;
 
 options_sg.writeautoms = TRUE;
 options_sg.cartesian = TRUE;
+options_sg.linelength= 0;
 
         FILE *infile;
         int codetype;
@@ -42,6 +43,9 @@ options_sg.cartesian = TRUE;
 
         int n, m;
 n = g_sg ->nv;
+
+
+
 fprintf(stderr,"vertices %d\n", n);
 m = SETWORDSNEEDED(n);
 
