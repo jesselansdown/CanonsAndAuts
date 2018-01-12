@@ -1,5 +1,5 @@
 // To compile: gcc CanonsAndAuts.c -o CanonsAndAuts nauty.a
-// To use: CanonsAndAuts graphfile.g6
+// To use: CanonsAndAuts graphfile.g6 colourings.txt
 
 #include "nauty.h"
 #include "nausparse.h"
@@ -49,36 +49,69 @@ options_sg.getcanon = TRUE;
 
 nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 
-        DYNALLOC1(int,lab,lab_sz,n,"malloc");
-        DYNALLOC1(int,ptn,ptn_sz,n,"malloc");
-        DYNALLOC1(int,orbits,orbits_sz,n,"malloc");
-
-        sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
 
 
 
-//sortlists_sg(&csg);
-//putcanon_sg(stdout,lab,&csg,options_sg.linelength);
 
 
-//	DYNALLSTAT(int,workperm,workperm_sz);
-//    DYNALLOC1(int,workperm,workperm_sz,n+2,"putcanon");
-//    int i;
-//    for (i = 0; i < n; ++i) workperm[i] = lab[i];
-//    writeperm(stdout,workperm,TRUE,options_sg.linelength,n);
-
-    long zseed;
-
-               	zseed = hashgraph_sg(&csg,2922320L);
-                fprintf(stdout,"[%c%07lx",zseed);
+// Here we read in a file. Later it will be the file containing the colourings, and will find auts and canons for all of them
 
 
-                zseed = hashgraph_sg(&csg,19883109L);
-                fprintf(stdout," %07lx",zseed);
+	FILE *colourings;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t size;
+ 
+	colourings = fopen(argv[2], "r");
+	if (colourings == NULL)
+		exit(EXIT_FAILURE);
 
-                zseed = hashgraph_sg(&csg,489317L);
-                fprintf(stdout," %07lx]\n",zseed);
-                /* print a hash function for the cannonical graph */
+
+
+	while ((size = getline(&line, &len, colourings)) != -1) {
+		printf("%s", line);
+
+			        DYNALLOC1(int,lab,lab_sz,n,"malloc");
+			        DYNALLOC1(int,ptn,ptn_sz,n,"malloc");
+			        DYNALLOC1(int,orbits,orbits_sz,n,"malloc");
+
+
+// !!!!!!!!!!! Here we need to set the lap and ptn up properly by reading in the values of the line
+
+			        sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
+
+
+
+			//sortlists_sg(&csg);
+			//putcanon_sg(stdout,lab,&csg,options_sg.linelength);
+
+
+			//	DYNALLSTAT(int,workperm,workperm_sz);
+			//    DYNALLOC1(int,workperm,workperm_sz,n+2,"putcanon");
+			//    int i;
+			//    for (i = 0; i < n; ++i) workperm[i] = lab[i];
+			//    writeperm(stdout,workperm,TRUE,options_sg.linelength,n);
+
+			    long zseed;
+
+			               	zseed = hashgraph_sg(&csg,2922320L);
+			                fprintf(stdout,"[%c%07lx",zseed);
+
+
+			                zseed = hashgraph_sg(&csg,19883109L);
+			                fprintf(stdout," %07lx",zseed);
+
+			                zseed = hashgraph_sg(&csg,489317L);
+			                fprintf(stdout," %07lx]\n",zseed);
+			                /* print a hash function for the cannonical graph */
+
+ 
+
+	}
+ 
+	free(line);
+	fclose(colourings);
+	exit(EXIT_SUCCESS);
 
 }
 
