@@ -16,8 +16,6 @@ int argc;
 char **argv;
 {
 
-fprintf(stderr,"part1\n");
-
         graphfile = (char*) argv[1];
 
 
@@ -40,8 +38,6 @@ options_sg.linelength= 0;
 
         input = (FILE*) opengraphfile(graphfile,&codetype,0,1);
         g_sg =  (sparsegraph*) read_sg(input,NULL);
-
-fprintf(stderr,"part2\n");
 
         int n, m;
 n = g_sg ->nv;
@@ -113,20 +109,20 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 // Here we read in a file. Later it will be the file containing the colourings, and will find auts and canons for all of them
 
 
-//	FILE *colourings;
-//	char *line = NULL;
-//	size_t len = 0;
-//	ssize_t size;
+	FILE *colourings;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t size;
  
-//	colourings = fopen(argv[2], "r");
-//	if (colourings == NULL)
-//		exit(EXIT_FAILURE);
+	colourings = fopen(argv[2], "r");
+	if (colourings == NULL)
+		exit(EXIT_FAILURE);
 
 
 
 
-//	while ((size = getline(&line, &len, colourings)) != -1) {
-//		printf("%s", line);
+	while ((size = getline(&line, &len, colourings)) != -1) {
+		printf("%s", line);
 
 
 
@@ -141,31 +137,28 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 			//putcanon_sg(stdout,lab,&csg,options_sg.linelength);
 
 
-				DYNALLSTAT(int,workperm,workperm_sz);
-			    DYNALLOC1(int,workperm,workperm_sz,n+2,"putcanon");
-			    for (i = 0; i < n; ++i) workperm[i] = lab[i];
-			    writeperm(stdout,workperm,TRUE,options_sg.linelength,n);
+//				DYNALLSTAT(int,workperm,workperm_sz);
+//			    DYNALLOC1(int,workperm,workperm_sz,n+2,"putcanon");
+//			    for (i = 0; i < n; ++i) workperm[i] = lab[i];
+//			    writeperm(stdout,workperm,TRUE,options_sg.linelength,n);
 
-//			    long zseed;
+			    long zseed;
 
-//			               	zseed = hashgraph_sg(&csg,2922320L);
-//			                fprintf(stdout,"[%c%07lx",zseed);
-
-
-//			                zseed = hashgraph_sg(&csg,19883109L);
-//			                fprintf(stdout," %07lx",zseed);
-
-//			                zseed = hashgraph_sg(&csg,489317L);
-//			                fprintf(stdout," %07lx]\n",zseed);
+			               	zseed = hashgraph_sg(&csg,2922320L);
+			                fprintf(stdout,"[%c%07lx",zseed);
+			                zseed = hashgraph_sg(&csg,19883109L);
+			                fprintf(stdout," %07lx",zseed);
+			                zseed = hashgraph_sg(&csg,489317L);
+			                fprintf(stdout," %07lx]\n",zseed);
 			                /* print a hash function for the cannonical graph */
 
  
 
-//	}
-// 
-//	free(line);
-//	fclose(colourings);
-//	exit(EXIT_SUCCESS);
+	}
+ 
+	free(line);
+	fclose(colourings);
+	exit(EXIT_SUCCESS);
 
 }
 
