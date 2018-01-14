@@ -55,7 +55,6 @@ options_sg.defaultptn = FALSE;
 nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 
 
-		int test[n];
 		int lab[n];
 		int ptn[n];
 		int btlst[n];
@@ -66,37 +65,50 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 			btlst[i]=0;
 			ptn[i]=0;
 			lab[i]=i;
-//			fprintf(stderr, "%d\n", i);
-//			fprintf(stderr, "%d\n", lab[i]);
-//			fprintf(stderr, "%d\n", ptn[i]);
+			fprintf(stderr, "%d\n", i);
+			fprintf(stderr, "%d\n", lab[i]);
+			fprintf(stderr, "%d\n", ptn[i]);
 		}
 		
-
-		ptn[5]=1;
-
-//		int pos;
-//		pos = 3;
-//		int last;
-
 		//assign the initial partition, the btlst
-//		for ( i = 0; i < n; ++i)
-//		{
-//			if (btlst[i] !=1)
-//			{
-//				last = i;
-//				lab[pos++] = i;
-//				ptn[pos]=1;
-//			}
-//		}
-//		ptn[last]=0;
 
 
-//		for (i = 0; i < n; ++i)
-//		{
-//			fprintf(stderr, "%d\n", i);
-//			fprintf(stderr, "%d\n", lab[i]);
-//			fprintf(stderr, "%d\n", ptn[i]);
-//		}
+
+
+		lab[0]= 4;
+		btlst[4] =1;
+		ptn[0]=1;
+		lab[1]= 99;
+		btlst[99] =1;
+		ptn[1]=1;
+		lab[2]= 8;
+		btlst[8] =1;
+		ptn[2]=0;
+
+		int pos;
+		pos = 3;
+		int last;
+
+// given an initial partion and lab, fills in the remainder.
+
+		for ( i = 0; i < n; ++i)
+		{
+			if (btlst[i] !=1)
+			{
+				last = i;
+				lab[pos] = i;
+				ptn[pos++]=1;
+			}
+		}
+		ptn[last]=0;
+
+
+		for (i = 0; i < n; ++i)
+		{
+			fprintf(stderr, "%d ", i);
+			fprintf(stderr, "%d ", lab[i]);
+			fprintf(stderr, "%d\n", ptn[i]);
+		}
 
 
 //			        DYNALLOC1(int,lab,lab_sz,n,"malloc");
