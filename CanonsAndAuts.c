@@ -93,7 +93,12 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 	size_t len = 0;
 	ssize_t size;
  
-	colourings = fopen(argv[2], "r");
+ 	if (argc == 3){
+		colourings = fopen(argv[2], "r"); 		
+	}
+ 	else{
+ 		colourings = stdin;
+	}
 	if (colourings == NULL)
 		exit(EXIT_FAILURE);
 
@@ -152,23 +157,25 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 		// 	fprintf(stderr, "%d\n", ptn[i]);
 		// }
 
-			fprintf(stderr, "\nAbout to call nauty!\n");
+//			fprintf(stderr, "\nAbout to call nauty!\n");
 
 // !!!!!!!!!!! Here we need to set the lap and ptn up properly by reading in the values of the line
 
 			        sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
 
-			fprintf(stderr, "Finished nauty!\n");
+//			fprintf(stderr, "Finished nauty!\n");
 
+			sortlists_sg(&csg);
+//			putcanon_sg(stdout,lab,&csg,options_sg.linelength);
 
-			//sortlists_sg(&csg);
-			//putcanon_sg(stdout,lab,&csg,options_sg.linelength);
-
-
+//				fprintf(stdout,"%d %d\n",lab[0], ptn[0]);
 //				DYNALLSTAT(int,workperm,workperm_sz);
 //			    DYNALLOC1(int,workperm,workperm_sz,n+2,"putcanon");
 //			    for (i = 0; i < n; ++i) workperm[i] = lab[i];
 //			    writeperm(stdout,workperm,TRUE,options_sg.linelength,n);
+
+
+                putptn(stdout,lab,ptn,0,options_sg.linelength,n);
 
 			    long zseed;
 
