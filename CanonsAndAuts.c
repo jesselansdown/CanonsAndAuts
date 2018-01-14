@@ -65,50 +65,17 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 			btlst[i]=0;
 			ptn[i]=0;
 			lab[i]=i;
-			fprintf(stderr, "%d\n", i);
-			fprintf(stderr, "%d\n", lab[i]);
-			fprintf(stderr, "%d\n", ptn[i]);
+			// fprintf(stderr, "%d\n", i);
+			// fprintf(stderr, "%d\n", lab[i]);
+			// fprintf(stderr, "%d\n", ptn[i]);
 		}
 		
 		//assign the initial partition, the btlst
 
 
-
-
-		lab[0]= 4;
-		btlst[4] =1;
-		ptn[0]=1;
-		lab[1]= 99;
-		btlst[99] =1;
-		ptn[1]=1;
-		lab[2]= 8;
-		btlst[8] =1;
-		ptn[2]=0;
-
 		int pos;
-		pos = 3;
 		int last;
 
-// given an initial partion and lab, fills in the remainder.
-
-		for ( i = 0; i < n; ++i)
-		{
-			if (btlst[i] !=1)
-			{
-				last = i;
-				lab[pos] = i;
-				ptn[pos++]=1;
-			}
-		}
-		ptn[last]=0;
-
-
-		for (i = 0; i < n; ++i)
-		{
-			fprintf(stderr, "%d ", i);
-			fprintf(stderr, "%d ", lab[i]);
-			fprintf(stderr, "%d\n", ptn[i]);
-		}
 
 
 //			        DYNALLOC1(int,lab,lab_sz,n,"malloc");
@@ -131,18 +98,67 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 		exit(EXIT_FAILURE);
 
 
-
+	int num;
+	int val;
+	int test[10000];
 
 	while ((size = getline(&line, &len, colourings)) != -1) {
-		printf("%s", line);
+//		printf("%s", line);
 
 
+		for (i = 0; i < n; ++i)
+		{
+			btlst[i]=0;
+			ptn[i]=0;
+			lab[i]=i;
+			// fprintf(stderr, "%d\n", i);
+			// fprintf(stderr, "%d\n", lab[i]);
+			// fprintf(stderr, "%d\n", ptn[i]);
+		}
 
+
+		i=0;
+		while (sscanf(line, "%d", &val) == 1) {
+			lab[i]=val;
+			btlst[val] =1;
+			ptn[i++]=1;
+//			printf("%d", test[i-1]);
+		    line = strchr(line, ' ');
+		    if (!line) break;
+		    line++;
+		}
+		ptn[i-1]=0;
+		pos=i;
+
+
+		// given an initial partion and lab, fills in the remainder.
+
+		for ( i = 0; i < n; ++i)
+		{
+			if (btlst[i] !=1)
+			{
+				last = i;
+				lab[pos] = i;
+				ptn[pos++]=1;
+			}
+		}
+		ptn[last]=0;
+
+
+		// for (i = 0; i < n; ++i)
+		// {
+		// 	fprintf(stderr, "%d ", i);
+		// 	fprintf(stderr, "%d ", lab[i]);
+		// 	fprintf(stderr, "%d\n", ptn[i]);
+		// }
+
+			fprintf(stderr, "\nAbout to call nauty!\n");
 
 // !!!!!!!!!!! Here we need to set the lap and ptn up properly by reading in the values of the line
 
 			        sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
 
+			fprintf(stderr, "Finished nauty!\n");
 
 
 			//sortlists_sg(&csg);
