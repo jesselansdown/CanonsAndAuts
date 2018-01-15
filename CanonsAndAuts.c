@@ -1,3 +1,5 @@
+// Jesse Lansdown
+
 // To compile: gcc CanonsAndAuts.c -o CanonsAndAuts nauty.a
 // To use: CanonsAndAuts graphfile.g6 colourings.txt
 
@@ -16,76 +18,47 @@ int argc;
 char **argv;
 {
 
-        graphfile = (char*) argv[1];
+    graphfile = (char*) argv[1];
 
+    DYNALLSTAT(int,orbits,orbits_sz);
 
+	options_sg.writeautoms = TRUE;
+	options_sg.cartesian = TRUE;
+	options_sg.linelength= 0;		// Setting to 0 turns the line breaks off.
+	options_sg.getcanon = TRUE;
+	options_sg.defaultptn = FALSE;		// Allow user defined partitons to be used.
 
-//        DYNALLSTAT(int,lab,lab_sz);
-//        DYNALLSTAT(int,ptn,ptn_sz);
-        DYNALLSTAT(int,orbits,orbits_sz);
+    FILE *input;
+    int codetype;
 
+    sparsegraph *g;
 
+    input = (FILE*) opengraphfile(graphfile,&codetype,0,1);
+    g_sg =  (sparsegraph*) read_sg(input,NULL);
 
-//options_sg.writeautoms = TRUE;
-options_sg.cartesian = TRUE;
-options_sg.linelength= 0;
+    int n, m;
+	n = g_sg ->nv;
+	m = SETWORDSNEEDED(n);
+	nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 
-        FILE *input;
-        int codetype;
+	SG_DECL(csg);
 
+	int lab[n];
+	int ptn[n];
+	int btlst[n];
 
-        sparsegraph *g;
-
-        input = (FILE*) opengraphfile(graphfile,&codetype,0,1);
-        g_sg =  (sparsegraph*) read_sg(input,NULL);
-
-        int n, m;
-n = g_sg ->nv;
-
-
-
-fprintf(stderr,"vertices %d\n", n);
-m = SETWORDSNEEDED(n);
-
-
-SG_DECL(csg);
-options_sg.getcanon = TRUE;
-options_sg.defaultptn = FALSE;
-
-nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
-
-
-		int lab[n];
-		int ptn[n];
-		int btlst[n];
-
-		int i;
-		for (i = 0; i < n; ++i)
-		{
-			btlst[i]=0;
-			ptn[i]=0;
-			lab[i]=i;
-			// fprintf(stderr, "%d\n", i);
-			// fprintf(stderr, "%d\n", lab[i]);
-			// fprintf(stderr, "%d\n", ptn[i]);
-		}
+	int i;
+	for (i = 0; i < n; ++i)
+	{
+		btlst[i]=0;		// Initially set the bit list to all 0
+		ptn[i]=0;		// Set initial ptn to all 0
+		lab[i]=i;		// Set initial lab to be [0 .. n-1]
+	}
 		
-		//assign the initial partition, the btlst
+	DYNALLOC1(int,orbits,orbits_sz,n,"malloc"); // set up orbits.
 
-
-		int pos;
-		int last;
-
-
-
-//			        DYNALLOC1(int,lab,lab_sz,n,"malloc");
-//			        DYNALLOC1(int,ptn,ptn_sz,n,"malloc");
-			        DYNALLOC1(int,orbits,orbits_sz,n,"malloc");
-
-
-
-
-// Here we read in a file. Later it will be the file containing the colourings, and will find auts and canons for all of them
+	int pos;  // This will mark the position in lab to resume from
+	int last;	// This will mark the last entry added to ptn, so that it can be set to 0
 
 
 	FILE *colourings;
@@ -94,27 +67,28 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 	ssize_t size;
  
  	if (argc == 3){
-		colourings = fopen(argv[2], "r"); 		
+		colourings = fopen(argv[2], "r"); 	// If a second argument is given, it is a file containing partions	
 	}
  	else{
- 		colourings = stdin;
+ 		colourings = stdin;		// If no second argument is given, read partions from stdin
 	}
 	if (colourings == NULL)
 		exit(EXIT_FAILURE);
 
-
-	int num;
 	int val;
-	int test[10000];
+	int count;
+	count = 0;
 
 	while ((size = getline(&line, &len, colourings)) != -1) {
 //		printf("%s", line);
 
+		count++;
+		fprintf(stdout, "%d\n", count);
 
 		for (i = 0; i < n; ++i)
 		{
-			btlst[i]=0;
-			ptn[i]=0;
+			btlst[i]=0;		// Reset the bitlist to 0 at the start of each iteration
+			ptn[i]=0;		// Rest the ptn and lab
 			lab[i]=i;
 			// fprintf(stderr, "%d\n", i);
 			// fprintf(stderr, "%d\n", lab[i]);
@@ -124,23 +98,20 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 
 		i=0;
 		while (sscanf(line, "%d", &val) == 1) {
-			lab[i]=val;
-			btlst[val] =1;
-			ptn[i++]=1;
-//			printf("%d", test[i-1]);
-		    line = strchr(line, ' ');
+			lab[i]=val;		// Set the value of lab to be the value read in from the line
+			btlst[val] =1;		// Indicate that this value has been considered by setting the bitlist entry to 1
+			ptn[i++]=1;		// Set the corresponding ptn entry to 1 to indicate a continuation of the partition
+		    line = strchr(line, ' ');		// move to the next integer in the line
 		    if (!line) break;
 		    line++;
 		}
-		ptn[i-1]=0;
-		pos=i;
+		ptn[i-1]=0;		// set the last ptn entry to 0 to indicate th end of the partion
+		pos=i;		// Set pos to the value immeadiately after the last entry of lab, to complete the partition
 
-
-		// given an initial partion and lab, fills in the remainder.
 
 		for ( i = 0; i < n; ++i)
 		{
-			if (btlst[i] !=1)
+			if (btlst[i] !=1)	// Loop through, putting everything in the second half of the partition if the bitlist indicates it hasn't yet been considered
 			{
 				last = i;
 				lab[pos] = i;
@@ -150,20 +121,11 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 		ptn[last]=0;
 
 
-		// for (i = 0; i < n; ++i)
-		// {
-		// 	fprintf(stderr, "%d ", i);
-		// 	fprintf(stderr, "%d ", lab[i]);
-		// 	fprintf(stderr, "%d\n", ptn[i]);
-		// }
+		fprintf(stdout, "About to call nauty!\n");
 
-//			fprintf(stderr, "\nAbout to call nauty!\n");
+		sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
 
-// !!!!!!!!!!! Here we need to set the lap and ptn up properly by reading in the values of the line
-
-			        sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
-
-//			fprintf(stderr, "Finished nauty!\n");
+		fprintf(stdout, "Finished nauty!\n");
 
 			sortlists_sg(&csg);
 //			putcanon_sg(stdout,lab,&csg,options_sg.linelength);
@@ -175,11 +137,11 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 //			    writeperm(stdout,workperm,TRUE,options_sg.linelength,n);
 
 
-                putptn(stdout,lab,ptn,0,options_sg.linelength,n);
+//                putptn(stdout,lab,ptn,0,options_sg.linelength,n);
 
 			    long zseed;
 
-			               	zseed = hashgraph_sg(&csg,2922320L);
+			               	zseed = hashgraph_sg(&csg,2922320L);	// as done in dreadnaut.c - replace with canonically labelled partion once able
 			                fprintf(stdout,"[%c%07lx",zseed);
 			                zseed = hashgraph_sg(&csg,19883109L);
 			                fprintf(stdout," %07lx",zseed);
@@ -187,10 +149,11 @@ nauty_check(WORDSIZE,m,n,NAUTYVERSIONID);
 			                fprintf(stdout," %07lx]\n",zseed);
 			                /* print a hash function for the cannonical graph */
 
- 
 
+		line = NULL;	// Debug: Why is this needed? Gives segfault otherwise
+		fprintf(stdout, "\n" );
 	}
- 
+
 	free(line);
 	fclose(colourings);
 	exit(EXIT_SUCCESS);
