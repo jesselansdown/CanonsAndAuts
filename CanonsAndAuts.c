@@ -6,7 +6,7 @@
 #include "gtools.h"
 #include "nauty.h"
 #include "nausparse.h"
-
+#include <stdbool.h>
 
 static sparsegraph *g_sg;
 static DEFAULTOPTIONS_SPARSEGRAPH(options_sg);
@@ -17,6 +17,9 @@ int main(argc,argv)
 int argc;
 char **argv;
 {
+
+	bool silent;
+	silent = FALSE;
 
     graphfile = (char*) argv[1];
 
@@ -83,7 +86,8 @@ char **argv;
 //		printf("%s", line);
 
 		count++;
-		fprintf(stdout, "%d\n", count);
+		if (silent!=TRUE)
+			fprintf(stdout, "%d\n", count);
 
 		for (i = 0; i < n; ++i)
 		{
@@ -120,12 +124,13 @@ char **argv;
 		}
 		ptn[last]=0;
 
-
-		fprintf(stdout, "About to call nauty!\n");
+		if (silent!=TRUE)
+			fprintf(stdout, "About to call nauty!\n");
 
 		sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
 
-		fprintf(stdout, "Finished nauty!\n");
+		if (silent!=TRUE)
+			fprintf(stdout, "Finished nauty!\n");
 
 			sortlists_sg(&csg);
 //			putcanon_sg(stdout,lab,&csg,options_sg.linelength);
@@ -139,7 +144,10 @@ char **argv;
 
 //                putptn(stdout,lab,ptn,0,options_sg.linelength,n);
 
-			    long zseed;
+		long zseed;
+
+		if (silent!=TRUE)
+			fprintf(stdout, "Canonical hash code:\n");
 
 			               	zseed = hashgraph_sg(&csg,2922320L);	// as done in dreadnaut.c - replace with canonically labelled partion once able
 			                fprintf(stdout,"[%c%07lx",zseed);
@@ -151,7 +159,10 @@ char **argv;
 
 
 		line = NULL;	// Debug: Why is this needed? Gives segfault otherwise
-		fprintf(stdout, "\n" );
+
+		if (silent!=TRUE)
+			fprintf(stdout, "\n" );
+
 	}
 
 	free(line);
