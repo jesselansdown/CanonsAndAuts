@@ -61,7 +61,7 @@ char **argv;
 	DYNALLOC1(int,orbits,orbits_sz,n,"malloc"); // set up orbits.
 
 	int pos;  // This will mark the position in lab to resume from
-	int last;	// This will mark the last entry added to ptn, so that it can be set to 0
+//	int last;	// This will mark the last entry added to ptn, so that it can be set to 0
 
 
 	FILE *colourings;
@@ -86,8 +86,8 @@ char **argv;
 //		printf("%s", line);
 
 		count++;
-		if (silent!=TRUE)
-			fprintf(stdout, "%d\n", count);
+//		if (silent!=TRUE)
+//			fprintf(stdout, "%d : ", count);
 
 		for (i = 0; i < n; ++i)
 		{
@@ -117,15 +117,15 @@ char **argv;
 		{
 			if (btlst[i] !=1)	// Loop through, putting everything in the second half of the partition if the bitlist indicates it hasn't yet been considered
 			{
-				last = i;
+//				last = i;
 				lab[pos] = i;
 				ptn[pos++]=1;
 			}
 		}
-		ptn[last]=0;
+		ptn[n-1]=0;
 
 		if (silent!=TRUE)
-			fprintf(stdout, "About to call nauty!\n");
+			fprintf(stdout, "About to call nauty, iteration %d.\n", count);
 
 		sparsenauty(g_sg,lab,ptn,orbits,&options_sg,&stats,&csg);
 
