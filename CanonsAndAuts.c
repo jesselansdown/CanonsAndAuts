@@ -43,7 +43,7 @@ char **argv;
     g_sg =  (sparsegraph*) read_sg(input,NULL);
 
 	if (silent!=TRUE)
-		fprintf(stdout, "Graph read.\n");
+		fprintf(stdout, "Graph read.\n\n");
 
     int n, m;
 	n = g_sg ->nv;
