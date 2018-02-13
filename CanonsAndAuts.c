@@ -36,8 +36,14 @@ char **argv;
 
     sparsegraph *g;
 
+	if (silent!=TRUE)
+		fprintf(stdout, "Reading graph file...\n");
+
     input = (FILE*) opengraphfile(graphfile,&codetype,0,1);
     g_sg =  (sparsegraph*) read_sg(input,NULL);
+
+	if (silent!=TRUE)
+		fprintf(stdout, "Graph read.\n");
 
     int n, m;
 	n = g_sg ->nv;
